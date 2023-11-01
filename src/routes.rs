@@ -48,10 +48,20 @@ fn create_note(
         .and_then(handlers::create_note)
 }
 
+fn delete_note(
+    db: Db,
+) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    warp::path!("note" / i32)
+        .and(warp::delete())
+        .and(with_db(db))
+        .and_then(handlers::delete_note)
+}
+
 pub fn notes_routes(
     db: Db,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     root()
+        .or(delete_note(db.clone()))
         .or(create_note(db.clone()))
         .or(notes_list(db.clone()))
         .or(get_note(db))

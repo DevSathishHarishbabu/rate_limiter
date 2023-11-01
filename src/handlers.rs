@@ -23,3 +23,9 @@ pub async fn create_note(mut new_note: Note, db: Db) -> Result<impl warp::Reply,
     notes.insert(latest_id+1, new_note);
     Ok(warp::reply::with_status(warp::reply(), warp::http::StatusCode::CREATED))
 }
+
+pub async fn delete_note(id: i32, db: Db) -> Result<impl warp::Reply,Infallible>{
+    let mut notes = db.lock().await;
+    notes.remove(&id);
+    Ok(warp::reply::with_status(warp::reply(),warp::http::StatusCode::ACCEPTED))
+}
